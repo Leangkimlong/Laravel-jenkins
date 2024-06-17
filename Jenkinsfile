@@ -5,23 +5,21 @@ pipeline {
         stage('Fetch from GitHub') { // build steps
             steps {
                 echo 'Fetching from GitHub'
-                git branch: 'main', url:'https://github.com/Leangkimlong/Laravel-jenkins.git'
+                git branch: 'main', url:'https://github.com/taltongsreng/i4a-website.git'
             }
         }
-        stage('Install Composer') {
+        stage('Build using Tools') {
             steps {
-                sh 'composer install'
+                echo 'Compiling code...'
+                sh 'cp .env.example .env'
+                sh 'composer install && php artisan key:generate && npm install && npm run build'
             }
         }
-        stage('install npm') {
+        stage('Test the app') {
             steps {
-                sh 'npm i'
-                sh 'npm run build'
-            }
-        }
-        stage('Generate Key'){
-            steps{
-                sh 'php artisan key:generate'
+                echo 'Testing unit tests...'
+                echo 'Testing features...'
+                sh 'php artisan test'
             }
         }
     }
